@@ -24,6 +24,6 @@ pip install wmi pywinusb python-telegram-bot opencv-python
 ## How to Use
 
 1. Create a Telegram bot and obtain the bot token. See <a href="https://core.telegram.org/bots#creating-a-new-bot">Creating a new bot</a> for instructions.
-2. Get your Telegram chat ID. You can do this by messaging your bot, then visiting https://api.telegram.org/bot<YourBOTToken>/getUpdates in a web browser. Replace <YourBOTToken> with your bot token.
+2. Get your Telegram chat ID. You can do this by messaging your bot, then visiting https://api.telegram.org/bot<_YourBOTToken_>/getUpdates in a web browser. Replace <YourBOTToken> with your bot token.
 3. In the Python script, replace YOUR_BOT_TOKEN and YOUR_CHAT_ID with your bot token and chat ID, respectively.
 4. Run the script. You will receive a message with a photo in your Telegram chat whenever a USB device is connected or disconnected.
