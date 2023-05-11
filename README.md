@@ -1,4 +1,4 @@
-# USBMonitorTelegramBot
+# USBMonitorTelegramBot WINDOWS EDITION (!!!)
 
 <h1 align="center">USB Device Guard with Telegram Notifications</h1>
 
