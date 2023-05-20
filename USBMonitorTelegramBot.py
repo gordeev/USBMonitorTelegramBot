@@ -7,6 +7,7 @@ from threading import Thread
 from win32com.client import GetObject
 import cv2
 import os
+from datetime import datetime
 from telegram import InputFile
 
 # Initialize Telegram Bot
@@ -36,7 +37,7 @@ async def send_message_to_telegram(bot, chat_id, message):
 def monitor_usb():
     pythoncom.CoInitialize()  # Initialize COM library for this thread
     c = wmi.WMI()
-    last_count = len(c.Win32_USBControllerDevice())
+    last_devices = set(device.DeviceID for device in c.Win32_PnPEntity() if device.Caption and 'USB' in device.Caption)
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -44,13 +45,20 @@ def monitor_usb():
     try:
         while True:
             c = wmi.WMI()
-            count = len(c.Win32_USBControllerDevice())
-            if count != last_count:
-                if count > last_count:
-                    loop.run_until_complete(send_message_to_telegram(bot, chat_id, 'A new USB device has been connected.'))
-                else:
-                    loop.run_until_complete(send_message_to_telegram(bot, chat_id, 'A USB device has been disconnected.'))
-                last_count = count
+            current_devices = set(device.DeviceID for device in c.Win32_PnPEntity() if device.Caption and 'USB' in device.Caption)
+            if current_devices != last_devices:
+                new_devices = current_devices - last_devices
+                removed_devices = last_devices - current_devices
+
+                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                if new_devices:
+                    loop.run_until_complete(send_message_to_telegram(bot, chat_id, f'At {current_time}, new USB devices have been connected: {", ".join(new_devices)}.'))
+
+                if removed_devices:
+                    loop.run_until_complete(send_message_to_telegram(bot, chat_id, f'At {current_time}, USB devices have been disconnected: {", ".join(removed_devices)}.'))
+
+                last_devices = current_devices
             time.sleep(1)
     finally:
         loop.close()
